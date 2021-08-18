@@ -9,6 +9,7 @@ import hashProduct from "./mutations/hashProduct.js";
  */
 export default async function catalogStartup(context) {
   const { appEvents, collections } = context;
+
   appEvents.on("afterMediaInsert", ({ mediaRecord }) => {
     const { productId } = mediaRecord.metadata || {};
     if (productId) {

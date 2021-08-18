@@ -372,6 +372,8 @@ enum CatalogItemSortByField {
 type Vendor {
   "The name of the vendor"
   name: String
+
+  logo: String
 }
 
 "A connection edge in which each node is a String representing a vendor"
@@ -412,7 +414,7 @@ extend type Query {
   "Gets items from a shop catalog"
   catalogItems(
     "Provide a list of shop IDs from which you want to get catalog items"
-    shopIds: [ID]
+    shopIds: [ID]!
 
     "Optionally provide a list of tag IDs to further filter the item list"
     tagIds: [ID],

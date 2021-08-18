@@ -17,9 +17,9 @@ export default async function catalogItems(context, { searchQuery, shopIds, tagI
   const { collections } = context;
   const { Catalog } = collections;
 
-  // if ((!shopIds || shopIds.length === 0) && (!tagIds || tagIds.length === 0)) {
-  //   throw new ReactionError("invalid-param", "You must provide tagIds or shopIds or both");
-  // }
+  if ((!shopIds || shopIds.length === 0) && (!tagIds || tagIds.length === 0)) {
+    throw new ReactionError("invalid-param", "You must provide tagIds or shopIds or both");
+  }
 
   const query = {
     "product.isDeleted": { $ne: true },
@@ -31,22 +31,10 @@ export default async function catalogItems(context, { searchQuery, shopIds, tagI
   if (tagIds) query["product.tagIds"] = { $in: tagIds };
 
   if (searchQuery) {
-
-
-    query.$or = [
-      {
-        "product.pageTitle": { '$regex': _.escapeRegExp(searchQuery), '$options': 'i' }
-      },
-      {
-        "product.description": { '$regex': _.escapeRegExp(searchQuery), '$options': 'i' }
-      },
-
-    ]
-
-
+    query.$text = {
+      $search: _.escapeRegExp(searchQuery)
+    };
   }
 
-
-
-  return Catalog.find(query);
+  // return Catalog.find(query);
 }

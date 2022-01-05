@@ -3,11 +3,8 @@ import SimpleSchema from "simpl-schema";
 
 const filters = new SimpleSchema({
     catalogBooleanFilters: {
-        type: Array,
-        optional: true
-    },
-    "catalogBooleanFilters.$": {
         type: Object,
+        optional: true,
         blackbox: true
     },
     shopIds: {

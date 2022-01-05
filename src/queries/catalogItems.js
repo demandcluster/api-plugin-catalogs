@@ -1,5 +1,6 @@
 import _ from "lodash";
 import ReactionError from "@reactioncommerce/reaction-error";
+import applyCatalogItemFilters from "../utils/applyCatalogItemFilters.js";
 
 /**
  * @name catalogItems
@@ -21,32 +22,7 @@ export default async function catalogItems(context, { searchQuery, shopIds, tagI
   //   throw new ReactionError("invalid-param", "You must provide tagIds or shopIds or both");
   // }
 
-  const query = {
-    "product.isDeleted": { $ne: true },
-    ...catalogBooleanFilters,
-    "product.isVisible": true
-  };
+  const queryResponse = applyCatalogItemFilters(context, { searchQuery, shopIds, tagIds, catalogBooleanFilters });
 
-  if (shopIds) query.shopId = { $in: shopIds };
-  if (tagIds) query["product.tagIds"] = { $in: tagIds };
-
-  if (searchQuery) {
-
-
-    query.$or = [
-      {
-        "product.pageTitle": { '$regex': _.escapeRegExp(searchQuery), '$options': 'i' }
-      },
-      {
-        "product.description": { '$regex': _.escapeRegExp(searchQuery), '$options': 'i' }
-      },
-
-    ]
-
-
-  }
-
-
-
-  return Catalog.find(query);
+  return Catalog.find(queryResponse);
 }

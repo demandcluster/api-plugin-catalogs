@@ -1,6 +1,7 @@
 import _ from "lodash";
 import SimpleSchema from "simpl-schema";
 
+
 const filters = new SimpleSchema({
     catalogBooleanFilters: {
         type: Object,
@@ -20,7 +21,24 @@ const filters = new SimpleSchema({
     searchQuery: {
         type: String,
         optional: true
-    }
+    },
+    vendors: {
+        type: Array,
+        optional: true
+    },
+    "vendors.$": {
+        type: String
+    },
+    colors: {
+        type: Array,
+        optional: true
+    },
+    "colors.$": String,
+    sizes: {
+        type: Array,
+        optional: true
+    },
+    "sizes.$": String
 });
 
 /**
@@ -67,6 +85,24 @@ export default function applyCatalogItemFilters(context, catalogItemFilters) {
                     },
                 ]
             })
+        }
+
+        if (catalogItemFilters.vendors) {
+            Object.assign(selector, {
+                "product.vendor": { $in: catalogItemFilters.vendors }
+            });
+        }
+
+        if (catalogItemFilters.colors) {
+            Object.assign(selector, {
+                "product.variants.title": { $in: catalogItemFilters.colors }
+            });
+        }
+
+        if (catalogItemFilters.sizes) {
+            Object.assign(selector, {
+                "product.variants.options.title": { $in: catalogItemFilters.sizes }
+            });
         }
     }
 

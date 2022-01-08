@@ -14,7 +14,7 @@ import applyCatalogItemFilters from "../utils/applyCatalogItemFilters.js";
  * @param {String[]} [params.tags] - Tag IDs to include (OR)
  * @returns {Promise<MongoCursor>} - A MongoDB cursor for the proper query
  */
-export default async function catalogItems(context, { searchQuery, shopIds, tagIds, catalogBooleanFilters } = {}) {
+export default async function catalogItems(context, params) {
   const { collections } = context;
   const { Catalog } = collections;
 
@@ -22,7 +22,9 @@ export default async function catalogItems(context, { searchQuery, shopIds, tagI
   //   throw new ReactionError("invalid-param", "You must provide tagIds or shopIds or both");
   // }
 
-  const queryResponse = applyCatalogItemFilters(context, { searchQuery, shopIds, tagIds, catalogBooleanFilters });
+  const queryResponse = applyCatalogItemFilters(context, params);
+
+  console.log("query response", queryResponse);
 
   return Catalog.find(queryResponse);
 }

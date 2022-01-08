@@ -444,6 +444,15 @@ extend type Query {
     "Provide a Currency code if sortBy is minPrice"
     sortByPriceCurrencyCode: String
 
+    "Optional provide a list of vendors to further filter the item list"
+    vendors: [String]
+
+    "Optional provide a list of colors to further filter the item list"
+    colors: [String]
+
+    "Optional provide a list of sizes to further filter the item list"
+    sizes: [String]
+
     "By default, items are sorted by when they were last updated, most recently updated first. Set this to sort by one of the other allowed fields"
     sortBy: CatalogItemSortByField = updatedAt
   ): CatalogItemConnection

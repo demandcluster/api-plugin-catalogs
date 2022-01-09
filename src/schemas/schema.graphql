@@ -453,6 +453,15 @@ extend type Query {
     "Optional provide a list of sizes to further filter the item list"
     sizes: [String]
 
+    "Provite a list of products that containts a greater price than this"
+    minPrice: Float
+
+    "Provite a list of products that containts a less price than this"
+    maxPrice: Float
+
+    "Optional to get pricing by currency code"
+    currencyCode: String
+
     "By default, items are sorted by when they were last updated, most recently updated first. Set this to sort by one of the other allowed fields"
     sortBy: CatalogItemSortByField = updatedAt
   ): CatalogItemConnection

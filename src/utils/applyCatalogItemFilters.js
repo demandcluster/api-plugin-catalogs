@@ -1,6 +1,6 @@
 import _ from "lodash";
 import SimpleSchema from "simpl-schema";
-
+import ReactionError from "@reactioncommerce/reaction-error";
 
 const filters = new SimpleSchema({
     catalogBooleanFilters: {
@@ -38,7 +38,19 @@ const filters = new SimpleSchema({
         type: Array,
         optional: true
     },
-    "sizes.$": String
+    "sizes.$": String,
+    "minPrice": {
+        type: Number,
+        optional: true
+    },
+    "maxPrice": {
+        type: Number,
+        optional: true
+    },
+    "currencyCode": {
+        type: String,
+        optional: true
+    }
 });
 
 /**
@@ -102,6 +114,45 @@ export default function applyCatalogItemFilters(context, catalogItemFilters) {
         if (catalogItemFilters.sizes) {
             Object.assign(selector, {
                 "product.variants.options.title": { $in: catalogItemFilters.sizes }
+            });
+        }
+
+        if (catalogItemFilters.minPrice && !catalogItemFilters.maxPrice) {
+            if (!catalogItemFilters.currencyCode) throw new ReactionError("bad-request", 'param "currencyCode" is required to filter by range price');
+            const key = `pricing.${catalogItemFilters.currencyCode}.price`;
+
+            Object.assign(selector, {
+                "product.variants.options": {
+                    $elemMatch: {
+                        [key]: { $gt: catalogItemFilters.minPrice }
+                    }
+                }
+            });// selector.product.variants.options.$elemMatch[key] = { $gt: catalogItemFilters.minPrice };
+        }
+
+        if (!catalogItemFilters.minPrice && catalogItemFilters.maxPrice) {
+            if (!catalogItemFilters.currencyCode) throw new ReactionError("bad-request", 'param "currencyCode" is required to filter by price range');
+            const key = `pricing.${catalogItemFilters.currencyCode}.price`;
+
+            Object.assign(selector, {
+                "product.variants.options": {
+                    $elemMatch: {
+                        [key]: { $lt: catalogItemFilters.maxPrice }
+                    }
+                }
+            });
+        }
+
+        if (catalogItemFilters.minPrice && catalogItemFilters.maxPrice) {
+            if (!catalogItemFilters.currencyCode) throw new ReactionError("bad-request", 'param "currencyCode" is required to filter by price range');
+            const key = `pricing.${catalogItemFilters.currencyCode}.price`;
+
+            Object.assign(selector, {
+                "product.variants.options": {
+                    $elemMatch: {
+                        [key]: { $gt: catalogItemFilters.minPrice, $lt: catalogItemFilters.maxPrice }
+                    }
+                }
             });
         }
     }

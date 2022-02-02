@@ -374,6 +374,16 @@ type Vendor {
   name: String
 }
 
+type Color {
+  "The name of the color"
+  name: String
+}
+
+type Size {
+  "The name of the size"
+  name: String
+}
+
 "A connection edge in which each node is a String representing a vendor"
 type VendorEdge {
   "The cursor that represents this node in the paginated results"
@@ -381,6 +391,24 @@ type VendorEdge {
 
   "The vendor"
   node: Vendor
+}
+
+"A connection edge in which each node is a String representing a color"
+type ColorEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+
+  "The Color"
+  node: Color
+}
+
+"A connection edge in which each node is a String representing a size"
+type SizeEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+
+  "The Size"
+  node: Size
 }
 
 """
@@ -400,6 +428,56 @@ type VendorConnection {
   if you know you will not need to paginate the results.
   """
   nodes: [Vendor]
+
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+
+"""
+Wraps an array of colors, providing pagination cursors and information.
+
+For information about what Relay-compatible connections are and how to use them, see the following articles:
+- [Relay Connection Documentation](https://facebook.github.io/relay/docs/en/graphql-server-specification.html#connections)
+- [Relay Connection Specification](https://facebook.github.io/relay/graphql/connections.htm)
+- [Using Relay-style Connections With Apollo Client](https://www.apollographql.com/docs/react/recipes/pagination.html)
+"""
+type ColorConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [ColorEdge]
+
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [Color]
+
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+
+"""
+Wraps an array of sizes, providing pagination cursors and information.
+
+For information about what Relay-compatible connections are and how to use them, see the following articles:
+- [Relay Connection Documentation](https://facebook.github.io/relay/docs/en/graphql-server-specification.html#connections)
+- [Relay Connection Specification](https://facebook.github.io/relay/graphql/connections.htm)
+- [Using Relay-style Connections With Apollo Client](https://www.apollographql.com/docs/react/recipes/pagination.html)
+"""
+type SizeConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [SizeEdge]
+
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [Size]
 
   "Information to help a client request the next or previous page"
   pageInfo: PageInfo!
@@ -444,6 +522,24 @@ extend type Query {
     "Provide a Currency code if sortBy is minPrice"
     sortByPriceCurrencyCode: String
 
+    "Optional provide a list of vendors to further filter the item list"
+    vendors: [String]
+
+    "Optional provide a list of colors to further filter the item list"
+    colors: [String]
+
+    "Optional provide a list of sizes to further filter the item list"
+    sizes: [String]
+
+    "Provite a list of products that containts a greater price than this"
+    minPrice: Float
+
+    "Provite a list of products that containts a less price than this"
+    maxPrice: Float
+
+    "Optional to get pricing by currency code"
+    currencyCode: String
+
     "By default, items are sorted by when they were last updated, most recently updated first. Set this to sort by one of the other allowed fields"
     sortBy: CatalogItemSortByField = updatedAt
   ): CatalogItemConnection
@@ -486,6 +582,60 @@ extend type Query {
     "Return results sorted in this order"
     sortOrder: SortOrder = asc
   ): VendorConnection
+
+  "Gets an array of all colors"
+  colors(
+    "Optionally provide a list of shop IDs from which you want to get the colors"
+    shopIds: [ID],
+
+    "Optionally provide a list of tag IDs to further filter the colors"
+    tagIds: [ID],
+
+    "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+    after: ConnectionCursor,
+
+    "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor,
+
+    "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt,
+
+    "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt,
+
+    "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int,
+
+    "Return results sorted in this order"
+    sortOrder: SortOrder = asc
+  ): ColorConnection
+
+  "Gets an array of all sizes"
+  sizes(
+    "Optionally provide a list of shop IDs from which you want to get the sizes"
+    shopIds: [ID],
+
+    "Optionally provide a list of tag IDs to further filter the sizes"
+    tagIds: [ID],
+
+    "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+    after: ConnectionCursor,
+
+    "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor,
+
+    "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt,
+
+    "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt,
+
+    "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int,
+
+    "Return results sorted in this order"
+    sortOrder: SortOrder = asc
+  ): SizeConnection
 }
 
 extend type Mutation {

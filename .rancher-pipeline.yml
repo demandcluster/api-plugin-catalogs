@@ -13,14 +13,6 @@ stages:
     - sourceName: cicd
       sourceKey: NPM_PASS
       targetKey: NPM_PASS
-- name: Lint
-  steps:
-  - runScriptConfig:
-      image: node:latest
-      shellScript: npm run lint
-    env:
-      HOME: /home/jenkins
-      NPM_CONFIG_CACHE: /home/jenkins/.npm
 - name: Release
   steps:
   - runScriptConfig:

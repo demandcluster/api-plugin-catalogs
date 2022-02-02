@@ -23,9 +23,9 @@
       pipeline: [
         {
           $group: {
-            _id: "$product.variants.title",
+            _id: "$product.variants.optionTitle",
             name: {
-              $first: "$product.variants.title"
+              $first: "$product.variants.optionTitle"
             }
           }
         },

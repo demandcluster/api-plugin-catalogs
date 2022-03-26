@@ -2,6 +2,12 @@ import _ from "lodash";
 import SimpleSchema from "simpl-schema";
 import ReactionError from "@reactioncommerce/reaction-error";
 
+const ArrayStringToArrayRegExp = (items) => items.map((item) => {
+    const regex = new RegExp(`${item}`, "i");
+
+    return regex;
+});
+
 const filters = new SimpleSchema({
     catalogBooleanFilters: {
         type: Object,
@@ -107,13 +113,13 @@ export default function applyCatalogItemFilters(context, catalogItemFilters) {
 
         if (catalogItemFilters.colors) {
             Object.assign(selector, {
-                "product.variants.title": { $in: catalogItemFilters.colors }
+                "product.variants.color": { $in: ArrayStringToArrayRegExp(catalogItemFilters.colors) }
             });
         }
 
         if (catalogItemFilters.sizes) {
             Object.assign(selector, {
-                "product.variants.options.title": { $in: catalogItemFilters.sizes }
+                "product.variants.size": { $in: ArrayStringToArrayRegExp(catalogItemFilters.sizes) }
             });
         }
 
